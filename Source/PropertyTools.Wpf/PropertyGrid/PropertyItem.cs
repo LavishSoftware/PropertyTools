@@ -54,6 +54,7 @@ namespace PropertyTools.Wpf
             this.ListMaximumNumberOfItems = int.MaxValue;
             this.InputDirection = InputDirection.Vertical;
             this.SelectedValuePath = string.Empty;
+            this.DisplayMemberPath = string.Empty;
 
             this.FontSize = double.NaN;
         }
@@ -145,6 +146,12 @@ namespace PropertyTools.Wpf
         /// </summary>
         /// <value><c>true</c> if this property is read only; otherwise, <c>false</c>.</value>
         public bool IsReadOnly { get; set; }
+
+        /// <summary>
+        /// Gets or sets the display member path.
+        /// </summary>
+        /// <value>The display member path.</value>
+        public string DisplayMemberPath { get; set; }
 
         /// <summary>
         /// Gets or sets the display name.

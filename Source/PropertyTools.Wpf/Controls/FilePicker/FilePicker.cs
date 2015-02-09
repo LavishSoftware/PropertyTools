@@ -325,7 +325,8 @@ namespace PropertyTools.Wpf
                         {
                             FileName = this.FilePath,
                             Filter = this.Filter,
-                            DefaultExt = this.DefaultExtension
+                            DefaultExt = this.DefaultExtension,
+                            RestoreDirectory = true
                         };
                     if (true == d.ShowDialog())
                     {
@@ -339,7 +340,8 @@ namespace PropertyTools.Wpf
                         {
                             FileName = this.FilePath,
                             Filter = this.Filter,
-                            DefaultExt = this.DefaultExtension
+                            DefaultExt = this.DefaultExtension,
+                            RestoreDirectory = true,
                         };
                     if (true == d.ShowDialog())
                     {

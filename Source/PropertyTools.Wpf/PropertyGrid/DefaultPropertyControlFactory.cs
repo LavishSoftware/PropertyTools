@@ -641,9 +641,13 @@ namespace PropertyTools.Wpf
                         Header = ca.Header,
                         FormatString = ca.FormatString,
                         Width = (GridLength)(glc.ConvertFromInvariantString(ca.Width) ?? GridLength.Auto),
-                        IsReadOnly = ca.IsReadOnly
+                        IsReadOnly = ca.IsReadOnly,
+                        
                     };
-
+                if (ca.ConverterType!=null)
+                {
+                    cd.Converter = Activator.CreateInstance(ca.ConverterType) as IValueConverter;
+                }
                 if (ca.PropertyName == string.Empty && property.ListItemItemsSource != null)
                 {
                     cd.ItemsSource = property.ListItemItemsSource;

@@ -1560,7 +1560,8 @@ namespace PropertyTools.Wpf
                                     {
                                         Content = pi.DisplayName,
                                         VerticalAlignment = VerticalAlignment.Top,
-                                        Margin = new Thickness(0, 4, 0, 0)
+                                        Margin = new Thickness(0, 4, 0, 0),
+                                        Foreground = this.Foreground
                                     };
             }
             else
@@ -1569,7 +1570,8 @@ namespace PropertyTools.Wpf
                              {
                                  Content = pi.DisplayName,
                                  VerticalAlignment = VerticalAlignment.Center,
-                                 Margin = new Thickness(5, 0, 0, 0)
+                                 Margin = new Thickness(5, 0, 0, 0),
+                                 Foreground = this.Foreground
                              };
 
                 cb.SetBinding(

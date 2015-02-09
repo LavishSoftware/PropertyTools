@@ -59,6 +59,7 @@ namespace PropertyTools.DataAnnotations
         /// <param name="width">The width.</param>
         /// <param name="alignment">The alignment.</param>
         /// <param name="isReadOnly">The columns is read only if set to <c>true</c>.</param>
+        /// <param name="converterType">The type of converter to use</param>
         public ColumnAttribute(
             int columnIndex,
             string propertyName,
@@ -66,13 +67,15 @@ namespace PropertyTools.DataAnnotations
             string formatString,
             string width = "Auto",
             char alignment = 'C',
-            bool isReadOnly = false)
+            bool isReadOnly = false,
+            Type converterType = null)
             : this(columnIndex, propertyName, header)
         {
             this.FormatString = formatString;
             this.Width = width;
             this.Alignment = alignment;
             this.IsReadOnly = isReadOnly;
+            this.ConverterType = converterType;
         }
 
         /// <summary>
@@ -111,6 +114,12 @@ namespace PropertyTools.DataAnnotations
         /// </summary>
         /// <value>The name of the property.</value>
         public string PropertyName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type of the converter.
+        /// </summary>
+        /// <value>The type of the converter.</value>
+        public Type ConverterType { get; set; }
 
 #if !PCL
         /// <summary>
