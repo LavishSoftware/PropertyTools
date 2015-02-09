@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="DataGrid.Content.cs" company="PropertyTools">
 //   Copyright (c) 2014 PropertyTools contributors
 // </copyright>
@@ -9,6 +9,7 @@
 
 namespace PropertyTools.Wpf
 {
+    using System;
     using System.Collections.Specialized;
     using System.ComponentModel;
     using System.Linq;
@@ -16,6 +17,7 @@ namespace PropertyTools.Wpf
     using System.Windows.Controls;
     using System.Windows.Data;
     using System.Windows.Media;
+    using System.Windows.Threading;
 
     /// <summary>
     /// Represents a data grid with a spreadsheet style.
@@ -211,6 +213,11 @@ namespace PropertyTools.Wpf
                                       Padding = new Thickness(4, 2, 4, 2)
                                   };
 
+                if (pd != null && pd.Tooltip != null)
+                {
+                    ToolTipService.SetToolTip(cell, pd.Tooltip);
+                }
+
                 if (this.ColumnHeadersSource != null && this.ItemsInRows)
                 {
                     cell.DataContext = this.ColumnHeadersSource;
@@ -272,11 +279,15 @@ namespace PropertyTools.Wpf
             }
 
             // If PropertyType is undefined, use the type of the items in the ItemsSource
-            var itemsType = this.GetItemsType();
+            Type itemsType = null;
             foreach (var pd in this.PropertyDefinitions)
             {
                 if (pd.PropertyType == null)
                 {
+                    if (itemsType == null)
+                    {
+                        itemsType = this.GetItemsType();
+                    }
                     pd.PropertyType = itemsType;
                 }
             }
@@ -285,11 +296,13 @@ namespace PropertyTools.Wpf
             this.ItemsInColumns = this.PropertyDefinitions.FirstOrDefault(pd => pd is RowDefinition) != null;
 
             // If only PropertyName has been defined, use the type of the items to get the descriptor.
-            var itemType = TypeHelper.GetItemType(this.ItemsSource);
+            Type itemType = null;
             foreach (var pd in this.PropertyDefinitions)
             {
                 if (pd.Descriptor == null && !string.IsNullOrEmpty(pd.PropertyName))
                 {
+                    if (itemType == null)
+                        itemType = TypeHelper.GetItemType(this.ItemsSource);
                     pd.Descriptor = TypeDescriptor.GetProperties(itemType)[pd.PropertyName];
                 }
             }
@@ -320,11 +333,13 @@ namespace PropertyTools.Wpf
             this.UpdateColumns(columns);
             this.UpdateCells(rows, columns);
 
-            this.UpdateColumnWidths();
             this.UpdateSelectionVisibility();
             this.ShowEditControl();
 
             this.SubscribeToNotifications();
+            
+            // Update column width when all the controls are loaded.
+            Dispatcher.BeginInvoke(new Action(this.UpdateColumnWidths), DispatcherPriority.Loaded);
         }
 
         /// <summary>
