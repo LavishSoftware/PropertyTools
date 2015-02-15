@@ -1589,23 +1589,13 @@ namespace PropertyTools.Wpf
             FrameworkElement propertyLabel = null;
             if (pi.IsOptional)
             {
-                propertyLabel = new Label
-                                    {
-                                        Content = pi.DisplayName,
-                                        VerticalAlignment = VerticalAlignment.Top,
-                                        Margin = new Thickness(0, 4, 0, 0),
-                                        Foreground = this.Foreground
-                                    };
-            }
-            else
-            {
                 var cb = new CheckBox
-                             {
-                                 Content = pi.DisplayName,
-                                 VerticalAlignment = VerticalAlignment.Center,
-                                 Margin = new Thickness(5, 0, 0, 0),
-                                 Foreground = this.Foreground
-                             };
+                {
+                    Content = pi.DisplayName,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(5, 0, 0, 0),
+                    Foreground = this.Foreground,
+                };
 
                 cb.SetBinding(
                     ToggleButton.IsCheckedProperty,
@@ -1623,7 +1613,8 @@ namespace PropertyTools.Wpf
                     Content = pi.DisplayName,
                     GroupName = pi.RadioDescriptor.Name,
                     VerticalAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(5, 0, 0, 0)
+                    Margin = new Thickness(5, 0, 0, 0),
+                    Foreground = this.Foreground,
                 };
 
                 var converter = new EnumToBooleanConverter();
@@ -1643,7 +1634,8 @@ namespace PropertyTools.Wpf
                 {
                     Content = pi.DisplayName,
                     VerticalAlignment = VerticalAlignment.Top,
-                    Margin = new Thickness(0, 4, 0, 0)
+                    Margin = new Thickness(0, 4, 0, 0),
+                    Foreground = this.Foreground,
                 };
             }
 
