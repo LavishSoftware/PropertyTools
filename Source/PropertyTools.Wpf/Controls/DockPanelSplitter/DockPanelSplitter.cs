@@ -156,6 +156,7 @@ namespace PropertyTools.Wpf
                     this.width = this.element.ActualWidth;
                     this.height = this.element.ActualHeight;
                     this.CaptureMouse();
+                    e.Handled = true;
                 }
             }
 
@@ -223,6 +224,7 @@ namespace PropertyTools.Wpf
             if (this.IsMouseCaptured)
             {
                 this.ReleaseMouseCapture();
+                e.Handled = true;
             }
 
             base.OnMouseUp(e);
