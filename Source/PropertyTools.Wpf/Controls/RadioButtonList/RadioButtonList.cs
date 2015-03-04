@@ -271,7 +271,8 @@ namespace PropertyTools.Wpf
                         Content =
                             this.DescriptionConverter.Convert(
                                 itemValue, typeof(string), null, CultureInfo.CurrentCulture),
-                        Padding = this.ItemPadding
+                        Padding = this.ItemPadding,
+                        Foreground=this.Foreground,
                     };
 
                 var isCheckedBinding = new Binding("Value")
