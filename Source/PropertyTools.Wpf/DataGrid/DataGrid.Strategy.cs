@@ -215,15 +215,23 @@ namespace PropertyTools.Wpf
                             continue;
                         }
 
-                        Owner.ColumnDefinitions.Add(
-                            new ColumnDefinition
+                        
+                            ColumnDefinition cd = new ColumnDefinition
                             {
-                                Descriptor = descriptor,
-                                Header = info.Name,
+                                Descriptor = descriptor,                               
+                                Header = descriptor.GetDisplayName(),
                                 HorizontalAlignment = Owner.DefaultHorizontalAlignment,
                                 Width = Owner.DefaultColumnWidth
-                            });
+                            };
+                            DataAnnotations.ConverterAttribute coa = descriptor.GetFirstAttributeOrDefault<DataAnnotations.ConverterAttribute>();
+                            if (coa != null)
+                            {
+                                cd.Converter = Activator.CreateInstance(coa.ConverterType) as IValueConverter;
+                            }
+
+                        Owner.ColumnDefinitions.Add(cd);
                     }
+
 
                     return;
                 }
@@ -245,14 +253,20 @@ namespace PropertyTools.Wpf
                         continue;
                     }
 
-                    Owner.ColumnDefinitions.Add(
-                        new ColumnDefinition
+                    ColumnDefinition cd = new ColumnDefinition
                             {
                                 Descriptor = descriptor,
-                                Header = descriptor.Name,
+                                Header = descriptor.GetDisplayName(),
                                 HorizontalAlignment = Owner.DefaultHorizontalAlignment,
                                 Width = Owner.DefaultColumnWidth
-                            });
+                            };
+                    DataAnnotations.ConverterAttribute coa = descriptor.GetFirstAttributeOrDefault<DataAnnotations.ConverterAttribute>();
+                    if (coa != null)
+                    {
+                        cd.Converter = Activator.CreateInstance(coa.ConverterType) as IValueConverter;
+                    }
+
+                    Owner.ColumnDefinitions.Add(cd);
                 }
 
                 if (Owner.ColumnDefinitions.Count == 0)
