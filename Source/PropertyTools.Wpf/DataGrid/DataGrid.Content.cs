@@ -68,7 +68,7 @@ namespace PropertyTools.Wpf
             this.sheetGrid.Children.Add(this.currentBackground);
 
             // Add row lines to the sheet
-            for (int i = 1; i <= rows; i++)
+            for (int i = 0; i <= rows; i++)
             {
                 var border = new Border
                     {
