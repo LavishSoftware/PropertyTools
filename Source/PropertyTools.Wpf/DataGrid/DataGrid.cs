@@ -667,9 +667,9 @@ namespace PropertyTools.Wpf
                 }
 
                 this.sheetGrid.Children.Remove(this.currentEditor);
-                this.currentEditor = null;
                 this.Focus();
             }
+            this.currentEditor = null;
         }
 
         /// <summary>
