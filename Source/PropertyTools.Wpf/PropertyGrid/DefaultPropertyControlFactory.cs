@@ -89,6 +89,28 @@ namespace PropertyTools.Wpf
         {
             this.UpdateConverter(property);
 
+            // check for ControlFactoriesAttribute on the property
+            DataAnnotations.ControlFactoriesAttribute cfa = property.Descriptor.GetFirstAttributeOrDefault<DataAnnotations.ControlFactoriesAttribute>();
+            if (cfa != null && !string.IsNullOrEmpty(cfa.PropertyGrid_FactoryMethod))
+            {
+                var methodInfo = property.Descriptor.ComponentType.GetMethod(cfa.PropertyGrid_FactoryMethod);
+                if (methodInfo!=null)
+                    return (FrameworkElement)methodInfo.Invoke(null, new object[] { property, options });
+            }
+
+            // check for ControlFactoriesAttribute on the property's Type
+            object[] cfas = property.Descriptor.PropertyType.GetCustomAttributes(typeof(DataAnnotations.ControlFactoriesAttribute), false);
+            if (cfas != null && cfas.Length > 0)
+            {
+                cfa = (DataAnnotations.ControlFactoriesAttribute)cfas[0];
+                if (cfa != null && !string.IsNullOrEmpty(cfa.PropertyGrid_FactoryMethod))
+                {
+                    var methodInfo = property.Descriptor.PropertyType.GetMethod(cfa.PropertyGrid_FactoryMethod);
+                    if (methodInfo != null)
+                        return (FrameworkElement)methodInfo.Invoke(null, new object[] { property, options });
+                }
+            }
+
             foreach (var editor in this.Editors)
             {
                 if (editor.IsAssignable(property.Descriptor.PropertyType))

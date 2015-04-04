@@ -181,7 +181,7 @@ namespace PropertyTools.Wpf
         /// <returns>
         /// A binding.
         /// </returns>
-        public Binding CreateBinding(string bindingPath, UpdateSourceTrigger trigger = UpdateSourceTrigger.Default)
+        public Binding CreateBinding(string bindingPath, UpdateSourceTrigger trigger = UpdateSourceTrigger.Default, bool useConverter = true)
         {
             var bindingMode = this.IsReadOnly ? BindingMode.OneWay : BindingMode.TwoWay;
             var formatString = this.FormatString;
@@ -193,17 +193,22 @@ namespace PropertyTools.Wpf
             var binding = new Binding(bindingPath)
                 {
                     Mode = bindingMode,
-                    Converter = this.Converter,
-                    ConverterParameter = this.ConverterParameter,
                     StringFormat = formatString,
                     UpdateSourceTrigger = trigger,
                     ValidatesOnDataErrors = true,
                     ValidatesOnExceptions = true,
                     NotifyOnSourceUpdated = true
                 };
-            if (this.ConverterCulture != null)
+
+            if (useConverter)
             {
-                binding.ConverterCulture = this.ConverterCulture;
+                binding.Converter = this.Converter;
+                binding.ConverterParameter = this.ConverterParameter;
+
+                if (this.ConverterCulture != null)
+                {
+                    binding.ConverterCulture = this.ConverterCulture;
+                }
             }
 
             return binding;

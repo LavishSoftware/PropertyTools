@@ -455,7 +455,7 @@ namespace PropertyTools.Wpf
         /// <param name="commit">The commit.</param>
         public void EndTextEdit(bool commit = true)
         {
-            var textEditor = this.currentEditor as TextBox;
+            var textEditor = GetTextBoxEditControl();
             if (commit && textEditor != null)
             {
                 foreach (var cell in this.editingCells)
@@ -658,7 +658,7 @@ namespace PropertyTools.Wpf
         {
             if (this.currentEditor != null && this.currentEditor.Visibility == Visibility.Visible)
             {
-                var textEditor = this.currentEditor as TextBox;
+                var textEditor = GetTextBoxEditControl();
                 if (textEditor != null)
                 {
                     textEditor.PreviewKeyDown -= this.TextEditorPreviewKeyDown;
@@ -838,7 +838,7 @@ namespace PropertyTools.Wpf
                                        };
 
             this.UpdateGridContent();
-            this.SelectedCellsChanged();
+            this.OnSelectedCellsChanged();
 
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (s, e) => this.Copy()));
             this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Cut, (s, e) => this.Cut()));
@@ -970,10 +970,10 @@ namespace PropertyTools.Wpf
 
             this.SetElementDataContext(this.currentEditor, pd, item);
 
-            var textEditor = this.currentEditor as TextBox;
+            var textEditor = GetTextBoxEditControl();
             if (textEditor != null)
             {
-                this.currentEditor.Visibility = Visibility.Hidden;
+                //this.currentEditor.Visibility = Visibility.Hidden;
                 textEditor.PreviewKeyDown += this.TextEditorPreviewKeyDown;
                 textEditor.LostFocus += this.TextEditorLostFocus;
                 textEditor.Loaded += this.TextEditorLoaded;
@@ -995,6 +995,34 @@ namespace PropertyTools.Wpf
         }
 
         /// <summary>
+        /// Retrieves the text box editor
+        /// </summary>
+        /// <returns>The text box editor, if available</returns>
+        public TextBox GetTextBoxEditControl()
+        {
+            var textEditor = this.currentEditor as TextBox;
+            if (textEditor != null)
+            {
+                return textEditor;
+            }
+
+            if (this.currentEditor is Panel)
+            {
+                Panel p = this.currentEditor as Panel;
+                foreach(object o in p.Children)
+                {
+                    if (o is TextBox)
+                    {
+                        return o as TextBox;
+                    }
+                }
+//                return p.Children[p.Children.Count - 1] as TextBox;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Shows the text box editor.
         /// </summary>
         /// <returns>
@@ -1002,7 +1030,7 @@ namespace PropertyTools.Wpf
         /// </returns>
         public bool ShowTextBoxEditControl()
         {
-            var textEditor = this.currentEditor as TextBox;
+            var textEditor = GetTextBoxEditControl();
             if (textEditor != null)
             {
                 textEditor.Visibility = Visibility.Visible;
@@ -1114,7 +1142,7 @@ namespace PropertyTools.Wpf
         /// <returns>
         /// The display control.
         /// </returns>
-        protected virtual UIElement CreateDisplayControl(CellRef cell, PropertyDefinition pd, object item)
+        protected virtual FrameworkElement CreateDisplayControl(CellRef cell, PropertyDefinition pd, object item)
         {
             FrameworkElement element = null;
 
@@ -1482,7 +1510,7 @@ namespace PropertyTools.Wpf
                 this.ShowEditControl();
             }
 
-            var textEditor = this.currentEditor as TextBox;
+            var textEditor = GetTextBoxEditControl();
             if (textEditor != null)
             {
                 this.ShowTextBoxEditControl();
@@ -2726,23 +2754,37 @@ namespace PropertyTools.Wpf
 
                     break;
                 case Key.Down:
+                    if (!textEditor.AcceptsReturn)
+                    {
+                        this.EndTextEdit();
+                        this.OnKeyDown(e);
+                        e.Handled = true;
+                    }
+                    break;
                 case Key.Up:
+                    if (!textEditor.AcceptsReturn)
+                    {
+
                     this.EndTextEdit();
                     this.OnKeyDown(e);
                     e.Handled = true;
+                        }
                     break;
                 case Key.Enter:
-                    this.EndTextEdit();
-                    if (this.InputDirection == InputDirection.Vertical)
+                    if (!textEditor.AcceptsReturn)
                     {
-                        this.ChangeCurrentCell(shift ? -1 : 1, 0);
-                    }
-                    else
-                    {
-                        this.ChangeCurrentCell(0, shift ? -1 : 1);
-                    }
+                        this.EndTextEdit();
+                        if (this.InputDirection == InputDirection.Vertical)
+                        {
+                            this.ChangeCurrentCell(shift ? -1 : 1, 0);
+                        }
+                        else
+                        {
+                            this.ChangeCurrentCell(0, shift ? -1 : 1);
+                        }
 
-                    e.Handled = true;
+                        e.Handled = true;
+                    }
                     break;
                 case Key.Escape:
                     this.EndTextEdit(false);

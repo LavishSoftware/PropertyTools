@@ -31,6 +31,28 @@ namespace PropertyTools.Wpf
         /// </returns>
         public virtual FrameworkElement CreateDisplayControl(PropertyDefinition propertyDefinition, string bindingPath)
         {
+            // check for ControlFactoriesAttribute on the property
+            DataAnnotations.ControlFactoriesAttribute cfa = propertyDefinition.Descriptor.GetFirstAttributeOrDefault<DataAnnotations.ControlFactoriesAttribute>();
+            if (cfa != null && !string.IsNullOrEmpty(cfa.DataGrid_DisplayFactoryMethod))
+            {                
+                var methodInfo = propertyDefinition.Descriptor.ComponentType.GetMethod(cfa.DataGrid_DisplayFactoryMethod);
+                if (methodInfo!=null)
+                    return (FrameworkElement)methodInfo.Invoke(null, new object[] { propertyDefinition, bindingPath });
+            }
+
+            // check for ControlFactoriesAttribute on the property's Type
+            object[] cfas = propertyDefinition.PropertyType.GetCustomAttributes(typeof(DataAnnotations.ControlFactoriesAttribute), false);
+            if (cfas!=null && cfas.Length>0)
+            {
+                cfa = (DataAnnotations.ControlFactoriesAttribute)cfas[0];
+                if (cfa != null && !string.IsNullOrEmpty(cfa.DataGrid_DisplayFactoryMethod))
+                {
+                    var methodInfo = propertyDefinition.PropertyType.GetMethod(cfa.DataGrid_DisplayFactoryMethod);
+                    if (methodInfo != null)
+                        return (FrameworkElement)methodInfo.Invoke(null, new object[] { propertyDefinition, bindingPath });
+                }
+            }
+
             var propertyType = propertyDefinition.PropertyType;
             if (propertyType.Is(typeof(bool)))
             {
@@ -55,6 +77,28 @@ namespace PropertyTools.Wpf
         /// </returns>
         public virtual FrameworkElement CreateEditControl(PropertyDefinition propertyDefinition, string bindingPath)
         {
+            // check for ControlFactoriesAttribute on the property
+            DataAnnotations.ControlFactoriesAttribute cfa = propertyDefinition.Descriptor.GetFirstAttributeOrDefault<DataAnnotations.ControlFactoriesAttribute>();
+            if (cfa != null && !string.IsNullOrEmpty(cfa.DataGrid_EditorFactoryMethod))
+            {
+                var methodInfo = propertyDefinition.Descriptor.ComponentType.GetMethod(cfa.DataGrid_EditorFactoryMethod);
+                if (methodInfo != null)
+                    return (FrameworkElement)methodInfo.Invoke(null, new object[] { propertyDefinition, bindingPath });
+            }
+
+            // check for ControlFactoriesAttribute on the property's Type
+            object[] cfas = propertyDefinition.PropertyType.GetCustomAttributes(typeof(DataAnnotations.ControlFactoriesAttribute), false);
+            if (cfas != null && cfas.Length > 0)
+            {
+                cfa = (DataAnnotations.ControlFactoriesAttribute)cfas[0];
+                if (cfa != null && !string.IsNullOrEmpty(cfa.DataGrid_EditorFactoryMethod))
+                {
+                    var methodInfo = propertyDefinition.PropertyType.GetMethod(cfa.DataGrid_EditorFactoryMethod);
+                    if (methodInfo != null)
+                        return (FrameworkElement)methodInfo.Invoke(null, new object[] { propertyDefinition, bindingPath });
+                }
+            }
+
             var propertyType = propertyDefinition.PropertyType;
             if (propertyDefinition.ItemsSourceProperty != null || propertyDefinition.ItemsSource != null)
             {
@@ -89,8 +133,9 @@ namespace PropertyTools.Wpf
                 var cm = new CheckMark
                              {
                                  VerticalAlignment = VerticalAlignment.Center,
-                                 HorizontalAlignment = propertyDefinition.HorizontalAlignment
+                                 HorizontalAlignment = propertyDefinition.HorizontalAlignment,
                              };
+                cm.SetBinding(CheckMark.ForegroundProperty, new Binding() { Mode = BindingMode.OneWay, ElementName = "PART_SheetGrid", Path = new PropertyPath("TemplatedParent.Foreground") });
                 cm.SetBinding(CheckMark.IsCheckedProperty, propertyDefinition.CreateBinding(bindingPath));
                 return cm;
             }
@@ -99,8 +144,11 @@ namespace PropertyTools.Wpf
                         {
                             VerticalAlignment = VerticalAlignment.Center,
                             HorizontalAlignment = propertyDefinition.HorizontalAlignment,
-                            IsEnabled = !propertyDefinition.IsReadOnly
+                            IsEnabled = !propertyDefinition.IsReadOnly,
                         };
+
+            c.SetBinding(CheckBox.ForegroundProperty, new Binding() { Mode = BindingMode.OneWay, ElementName = "PART_SheetGrid", Path = new PropertyPath("TemplatedParent.Foreground") });
+
             c.SetBinding(ToggleButton.IsCheckedProperty, propertyDefinition.CreateBinding(bindingPath));
             return c;
         }
@@ -197,9 +245,10 @@ namespace PropertyTools.Wpf
             {
                 HorizontalAlignment = propertyDefinition.HorizontalAlignment,
                 VerticalAlignment = VerticalAlignment.Center,
-                Padding = new Thickness(4, 0, 4, 0)
+                Padding = new Thickness(4, 0, 4, 0),
             };
 
+            tb.SetBinding(TextBlock.ForegroundProperty, new Binding() { Mode = BindingMode.OneWay, ElementName = "PART_SheetGrid", Path = new PropertyPath("TemplatedParent.Foreground") });
             tb.SetBinding(TextBlock.TextProperty, propertyDefinition.CreateOneWayBinding(bindingPath));
             return tb;
         }
@@ -218,7 +267,7 @@ namespace PropertyTools.Wpf
                 HorizontalContentAlignment = propertyDefinition.HorizontalAlignment,
                 MaxLength = propertyDefinition.MaxLength,
                 BorderThickness = new Thickness(0),
-                Margin = new Thickness(1, 1, 0, 0)
+                Margin = new Thickness(1, 1, 0, 0),
             };
 
             tb.SetBinding(TextBox.TextProperty, propertyDefinition.CreateBinding(bindingPath));

@@ -333,7 +333,7 @@ namespace PropertyTools.Wpf
             set
             {
                 this.autoFillCell = (CellRef)CoerceSelectionCell(this, value);
-                this.SelectedCellsChanged();
+                this.OnSelectedCellsChanged();
             }
         }
 
@@ -1028,7 +1028,7 @@ namespace PropertyTools.Wpf
         /// </summary>
         private void CurrentCellChanged()
         {
-            this.SelectedCellsChanged();
+            this.OnSelectedCellsChanged();
 
             this.ScrollIntoView(this.CurrentCell);
 
@@ -1039,12 +1039,19 @@ namespace PropertyTools.Wpf
         }
 
         /// <summary>
+        /// Fires when the list of selected cells has changed
+        /// </summary>
+        public event EventHandler SelectedCellsChanged;
+
+        /// <summary>
         /// Handles change in selected cells.
         /// </summary>
-        private void SelectedCellsChanged()
+        private void OnSelectedCellsChanged()
         {
             if (this.selection == null)
             {
+                if (SelectedCellsChanged != null)
+                    SelectedCellsChanged(this, null);
                 return;
             }
 
@@ -1095,6 +1102,9 @@ namespace PropertyTools.Wpf
             {
                 this.HideEditor();
             }
+
+            if (SelectedCellsChanged != null)
+                SelectedCellsChanged(this, null);
         }
 
         /// <summary>
@@ -1128,7 +1138,7 @@ namespace PropertyTools.Wpf
         /// </summary>
         private void SelectionCellChanged()
         {
-            this.SelectedCellsChanged();
+            this.OnSelectedCellsChanged();
 
             this.ScrollIntoView(this.SelectionCell);
         }
