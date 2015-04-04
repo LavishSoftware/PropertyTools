@@ -178,6 +178,7 @@ namespace PropertyTools.Wpf
         /// </summary>
         /// <param name="bindingPath">The binding path.</param>
         /// <param name="trigger">The trigger.</param>
+        /// <param name="useConverter">Specifies whether to use the property's specified Converter</param>
         /// <returns>
         /// A binding.
         /// </returns>
