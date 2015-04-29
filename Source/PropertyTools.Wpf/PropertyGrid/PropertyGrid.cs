@@ -1222,6 +1222,9 @@ namespace PropertyTools.Wpf
                         Focusable = false
                     };
                     break;
+                case CategoryControlType.Hidden:
+                    groupContentControl = new HeaderedContentControl() { Focusable = false, HeaderTemplate = new DataTemplate() };
+                    break;
             }
 
             if (groupContentControl != null)

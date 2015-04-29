@@ -27,6 +27,11 @@ namespace PropertyTools.Wpf
         /// <summary>
         /// Content control. Remember to set the CategoryControlTemplate.
         /// </summary>
-        Template
+        Template,
+
+        /// <summary>
+        /// Hidden categories control without requiring a Template.
+        /// </summary>
+        Hidden,
     }
 }
