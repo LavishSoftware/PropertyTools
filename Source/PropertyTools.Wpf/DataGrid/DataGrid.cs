@@ -222,6 +222,11 @@ namespace PropertyTools.Wpf
         private bool isSelectingColumns;
 
         /// <summary>
+        /// Column splitter is being dragged
+        /// </summary>
+        private bool isDraggingColumnSplitter;
+
+        /// <summary>
         /// The sheet grid control.
         /// </summary>
         private Grid sheetGrid;
@@ -826,7 +831,7 @@ namespace PropertyTools.Wpf
 
             this.columnGrid.Loaded += this.ColumnGridLoaded;
 
-            this.sheetGrid.SizeChanged += this.ColumnGridSizeChanged;
+            this.sheetGrid.SizeChanged += this.SheetGridSizeChanged;
             this.sheetGrid.MouseLeftButtonDown += this.SheetGridMouseLeftButtonDown;
 
             this.autoFiller = new AutoFiller(this.GetCellValue, this.TrySetCellValue);
@@ -1922,8 +1927,10 @@ namespace PropertyTools.Wpf
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void ColumnGridSizeChanged(object sender, SizeChangedEventArgs e)
+        private void SheetGridSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            if (e.NewSize == e.PreviousSize)
+                return;
             this.UpdateColumnWidths();
         }
 
@@ -1951,6 +1958,14 @@ namespace PropertyTools.Wpf
                 tt.IsOpen = false;
                 gs.ToolTip = null;
             }
+
+            int column = Grid.GetColumn(gs);
+            var width = this.columnGrid.ColumnDefinitions[column].ActualWidth;
+            this.columnGrid.ColumnDefinitions[column].Width = new GridLength(width);
+            ((ColumnDefinition)this.ColumnDefinitions[column]).Width = new GridLength(width);
+            
+            isDraggingColumnSplitter = false;
+            UpdateColumnWidths();
         }
 
         /// <summary>
@@ -1960,6 +1975,7 @@ namespace PropertyTools.Wpf
         /// <param name="e">The event arguments.</param>
         private void ColumnSplitterChangeDelta(object sender, DragDeltaEventArgs e)
         {
+            isDraggingColumnSplitter = true;
             var gs = (GridSplitter)sender;
             var tt = gs.ToolTip as ToolTip;
 

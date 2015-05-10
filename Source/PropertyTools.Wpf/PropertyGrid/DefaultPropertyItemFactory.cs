@@ -462,6 +462,7 @@ namespace PropertyTools.Wpf
                 {
                     case DataType.MultilineText:
                         pi.AcceptsReturn = true;
+                        pi.TextWrapping = System.Windows.TextWrapping.NoWrap;
                         break;
                     case DataType.Password:
                         pi.IsPassword = true;

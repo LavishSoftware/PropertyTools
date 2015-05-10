@@ -135,7 +135,7 @@ namespace PropertyTools.Wpf
         /// </summary>
         private void UpdateColumnWidths()
         {
-            if (!this.IsLoaded)
+            if (!this.IsLoaded || this.isDraggingColumnSplitter)
             {
                 return;
             }
@@ -146,9 +146,19 @@ namespace PropertyTools.Wpf
 
             for (int i = 0; i < this.Columns; i++)
             {
-                if (this.GetColumnWidth(i) == GridLength.Auto || this.AutoSizeColumns)
+                if (this.AutoSizeColumns)
                 {
                     this.AutoSizeColumn(i);
+                }
+                else
+                {
+                    GridLength gl = this.GetColumnWidth(i);
+                    if (gl.IsAuto)
+                        this.AutoSizeColumn(i);
+                    else
+                    {
+                        this.sheetGrid.ColumnDefinitions[i].Width = gl;
+                    }
                 }
             }
 
@@ -156,9 +166,10 @@ namespace PropertyTools.Wpf
 
             for (int j = 0; j < this.sheetGrid.ColumnDefinitions.Count; j++)
             {
-                this.columnGrid.ColumnDefinitions[j].Width =
-                    new GridLength(this.sheetGrid.ColumnDefinitions[j].ActualWidth);
+                this.columnGrid.ColumnDefinitions[j].Width = new GridLength(this.sheetGrid.ColumnDefinitions[j].ActualWidth);
+//                System.Diagnostics.Trace.WriteLine("column #" + j + " current width="+currentWidth+" new width=" + newWidth);
             }
+            this.columnGrid.UpdateLayout();
         }
 
         /// <summary>
