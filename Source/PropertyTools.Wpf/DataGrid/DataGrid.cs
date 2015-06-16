@@ -1843,6 +1843,7 @@ namespace PropertyTools.Wpf
         /// <param name="e">The event arguments.</param>
         private void AddItemCellMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            editingCells = new List<CellRef>();
             this.Focus();
             this.InsertItem(-1);
             e.Handled = true;
@@ -1876,6 +1877,7 @@ namespace PropertyTools.Wpf
         /// <param name="e">The event arguments.</param>
         private void ColumnGridMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            editingCells = new List<CellRef>();
             this.Focus();
             int column = this.GetCell(e.GetPosition(this.columnGrid)).Column;
             if (column >= 0)
@@ -1897,6 +1899,7 @@ namespace PropertyTools.Wpf
         /// <param name="e">The event arguments.</param>
         private void ColumnGridMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            editingCells = new List<CellRef>();
             this.columnGrid.ReleaseMouseCapture();
             this.isSelectingColumns = false;
         }
@@ -2034,6 +2037,8 @@ namespace PropertyTools.Wpf
         /// </summary>
         private void DeleteColumns()
         {
+            editingCells = new List<CellRef>();
+
             if (this.IsIListIList() && this.ColumnHeadersSource != null)
             {
                 int from = Math.Min(this.CurrentCell.Column, this.SelectionCell.Column);
@@ -2073,6 +2078,8 @@ namespace PropertyTools.Wpf
         /// </summary>
         private void DeleteRows()
         {
+            editingCells = new List<CellRef>();
+
             int from = Math.Min(this.CurrentCell.Row, this.SelectionCell.Row);
             int to = Math.Max(this.CurrentCell.Row, this.SelectionCell.Row);
             for (int i = to; i >= from; i--)
@@ -2546,6 +2553,7 @@ namespace PropertyTools.Wpf
         /// <param name="e">The event arguments.</param>
         private void RowGridMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            editingCells = new List<CellRef>();
             this.Focus();
 
             int row = this.GetCell(e.GetPosition(this.rowGrid)).Row;
@@ -2569,6 +2577,7 @@ namespace PropertyTools.Wpf
         /// <param name="e">The event arguments.</param>
         private void RowGridMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            editingCells = new List<CellRef>();
             this.rowGrid.ReleaseMouseCapture();
             this.isSelectingRows = false;
         }
@@ -2914,6 +2923,7 @@ namespace PropertyTools.Wpf
         /// <param name="e">The event arguments.</param>
         private void TopLeftMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            editingCells = new List<CellRef>();
             this.Focus();
             this.CurrentCell = new CellRef(0, 0);
             this.SelectionCell = new CellRef(this.Rows - 1, this.Columns - 1);
