@@ -145,6 +145,7 @@ namespace PropertyTools.Wpf
                             VerticalAlignment = VerticalAlignment.Center,
                             HorizontalAlignment = propertyDefinition.HorizontalAlignment,
                             IsEnabled = !propertyDefinition.IsReadOnly,
+                         Cursor = System.Windows.Input.Cursors.Arrow,
                         };
 
             c.SetBinding(CheckBox.ForegroundProperty, new Binding() { Mode = BindingMode.OneWay, ElementName = "PART_SheetGrid", Path = new PropertyPath("TemplatedParent.Foreground") });
@@ -210,6 +211,7 @@ namespace PropertyTools.Wpf
         protected virtual FrameworkElement CreateComboBox(PropertyDefinition propertyDefinition, string bindingPath)
         {
             var c = new ComboBox { IsEditable = propertyDefinition.IsEditable, Focusable = false, Margin = new Thickness(0, 0, -1, -1) };
+            c.Cursor = System.Windows.Input.Cursors.Arrow;
             if (propertyDefinition.ItemsSource != null)
             {
                 c.ItemsSource = propertyDefinition.ItemsSource;
