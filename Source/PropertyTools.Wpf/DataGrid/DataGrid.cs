@@ -748,6 +748,7 @@ namespace PropertyTools.Wpf
                 }
             }
 
+            HideEditor();
             this.CurrentCell = new CellRef(row, column);
             this.SelectionCell = new CellRef(row, column);
             this.ScrollIntoView(this.CurrentCell);
