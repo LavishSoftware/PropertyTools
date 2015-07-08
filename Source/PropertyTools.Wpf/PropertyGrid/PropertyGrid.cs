@@ -1563,6 +1563,11 @@ namespace PropertyTools.Wpf
                 propertyPanel.SetBinding(
                     VisibilityProperty,
                     new Binding(pi.IsVisibleDescriptor.Name) { Converter = BoolToVisibilityConverter });
+
+                if (this.LabelWidthSharing != LabelWidthSharing.NotShared)
+                {
+                    propertyPanel.IsVisibleChanged += (s, e) => ((Grid)s).ColumnDefinitions[0].SharedSizeGroup = ((bool)e.NewValue) ? "labelColumn" : null;
+                }
             }
 
             if (this.EnableLabelWidthResizing && pi.HeaderPlacement == HeaderPlacement.Left)
@@ -1576,6 +1581,7 @@ namespace PropertyTools.Wpf
                             Focusable = false
                         });
             }
+
 
             panel.Children.Add(propertyPanel);
         }
