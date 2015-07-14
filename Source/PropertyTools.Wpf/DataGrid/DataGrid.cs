@@ -2700,6 +2700,7 @@ namespace PropertyTools.Wpf
         /// <param name="e">The event arguments.</param>
         private void SheetGridMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            HideEditor();
             if (e.ClickCount == 2)
             {
                 this.ShowTextBoxEditControl();
