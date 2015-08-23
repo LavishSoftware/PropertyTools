@@ -91,11 +91,25 @@ namespace PropertyTools.Wpf
                 "CanResizeColumns", typeof(bool), typeof(DataGrid), new UIPropertyMetadata(true));
 
         /// <summary>
+        /// Identifies the <see cref="MultiChangeInChangedColumnOnly"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty MultiChangeInChangedColumnOnlyProperty =
+            DependencyProperty.Register(
+                "MultiChangeInChangedColumnOnly", typeof(bool), typeof(DataGrid), new UIPropertyMetadata(false));
+
+        /// <summary>
         /// Identifies the <see cref="ColumnHeaderHeight"/> dependency property.
         /// </summary>
         public static readonly DependencyProperty ColumnHeaderHeightProperty =
             DependencyProperty.Register(
                 "ColumnHeaderHeight", typeof(GridLength), typeof(DataGrid), new UIPropertyMetadata(new GridLength(20)));
+
+        /// <summary>
+        /// Identifies the <see cref="SheetContextMenu"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty SheetContextMenuProperty =
+            DependencyProperty.Register(
+                "SheetContextMenu", typeof(ContextMenu), typeof(DataGrid), new UIPropertyMetadata(null));
 
         /// <summary>
         /// Identifies the <see cref="ColumnsContextMenu"/> dependency property.
@@ -436,6 +450,23 @@ namespace PropertyTools.Wpf
                 this.SetValue(CanResizeColumnsProperty, value);
             }
         }
+        
+        /// <summary>
+        /// Gets or sets a value indicating whether only cells in the changed column should be changed when changing value for a selection.
+        /// </summary>
+        /// <value><c>true</c> if only cells in the current column should be changed; otherwise, <c>false</c> .</value>
+        public bool MultiChangeInChangedColumnOnly
+        {
+            get
+            {
+                return (bool)this.GetValue(MultiChangeInChangedColumnOnlyProperty);
+            }
+
+            set
+            {
+                this.SetValue(MultiChangeInChangedColumnOnlyProperty, value);
+            }
+        }
 
         /// <summary>
         /// Gets the column definitions.
@@ -480,6 +511,23 @@ namespace PropertyTools.Wpf
             set
             {
                 this.SetValue(ColumnsContextMenuProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the columns context menu.
+        /// </summary>
+        /// <value>The columns context menu.</value>
+        public ContextMenu SheetContextMenu
+        {
+            get
+            {
+                return (ContextMenu)this.GetValue(SheetContextMenuProperty);
+            }
+
+            set
+            {
+                this.SetValue(SheetContextMenuProperty, value);
             }
         }
 

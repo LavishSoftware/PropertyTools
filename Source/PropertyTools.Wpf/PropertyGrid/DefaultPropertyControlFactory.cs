@@ -656,8 +656,7 @@ namespace PropertyTools.Wpf
                 AutoGenerateColumns = property.Columns.Count == 0
             };
 
-            var glc = new GridLengthConverter();
-            foreach (var ca in property.Columns.OrderBy(cd => cd.ColumnIndex))
+            foreach (var cd in property.Columns)
             {
                 var cd = new ColumnDefinition
                     {
@@ -668,26 +667,13 @@ namespace PropertyTools.Wpf
                         IsReadOnly = ca.IsReadOnly,
                         
                     };
-                if (ca.ConverterType!=null)
-                {
-                    cd.Converter = Activator.CreateInstance(ca.ConverterType) as IValueConverter;
-                }
                 if (ca.PropertyName == string.Empty && property.ListItemItemsSource != null)
                 {
                     cd.ItemsSource = property.ListItemItemsSource;
                 }
-
-                switch (ca.Alignment.ToString(CultureInfo.InvariantCulture).ToUpper())
+                if (ca.ConverterType!=null)
                 {
-                    case "L":
-                        cd.HorizontalAlignment = HorizontalAlignment.Left;
-                        break;
-                    case "R":
-                        cd.HorizontalAlignment = HorizontalAlignment.Right;
-                        break;
-                    default:
-                        cd.HorizontalAlignment = HorizontalAlignment.Center;
-                        break;
+                    cd.Converter = Activator.CreateInstance(ca.ConverterType) as IValueConverter;
                 }
 
                 c.ColumnDefinitions.Add(cd);

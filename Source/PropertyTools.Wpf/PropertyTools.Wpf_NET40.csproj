@@ -45,6 +45,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationFramework.Aero" />
+    <Reference Include="PropertyTools, Version=0.0.0.0, Culture=neutral, PublicKeyToken=ea0c9f2b460934d0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Output\NET40\PropertyTools.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -175,6 +179,7 @@
     <Compile Include="Converters\NullToBoolConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="DataGrid\DataGrid.Strategy.cs" />
+    <Compile Include="DataGrid\Definitions\TemplateColumnDefinition.cs" />
     <Compile Include="Helpers\AutoFiller.cs" />
     <Compile Include="Helpers\CaptureScreenshot.cs" />
     <Compile Include="Helpers\FormattedTimeSpanParser.cs" />
@@ -260,12 +265,6 @@
   <ItemGroup>
     <Resource Include="Controls\ColorPicker\ColorPicker.png" />
     <Resource Include="Controls\ColorPicker\Hsv.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\PropertyTools\PropertyTools_PCL.csproj">
-      <Project>{c365cbc8-fb8c-439d-87a4-fafbb25852ea}</Project>
-      <Name>PropertyTools_PCL</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

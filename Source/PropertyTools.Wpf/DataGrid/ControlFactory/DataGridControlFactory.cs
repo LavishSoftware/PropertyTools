@@ -9,12 +9,17 @@
 
 namespace PropertyTools.Wpf
 {
+    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Controls.Primitives;
     using System.Windows.Data;
     using System.Windows.Media;
     using System.Windows.Shapes;
+    
+    using PropertyTools.DataAnnotations;
+
+    using HorizontalAlignment = System.Windows.HorizontalAlignment;
 
     /// <summary>
     /// Creates display and edit controls for the DataGrid.
@@ -31,6 +36,10 @@ namespace PropertyTools.Wpf
         /// </returns>
         public virtual FrameworkElement CreateDisplayControl(PropertyDefinition propertyDefinition, string bindingPath)
         {
+            var control = propertyDefinition.CreateDisplayControl(bindingPath);
+            if (control != null)
+                return control;
+
             // check for ControlFactoriesAttribute on the property
             DataAnnotations.ControlFactoriesAttribute cfa = propertyDefinition.Descriptor.GetFirstAttributeOrDefault<DataAnnotations.ControlFactoriesAttribute>();
             if (cfa != null && !string.IsNullOrEmpty(cfa.DataGrid_DisplayFactoryMethod))
@@ -77,6 +86,10 @@ namespace PropertyTools.Wpf
         /// </returns>
         public virtual FrameworkElement CreateEditControl(PropertyDefinition propertyDefinition, string bindingPath)
         {
+            var control = propertyDefinition.CreateEditControl(bindingPath);
+            if (control != null)
+                return control;
+
             // check for ControlFactoriesAttribute on the property
             DataAnnotations.ControlFactoriesAttribute cfa = propertyDefinition.Descriptor.GetFirstAttributeOrDefault<DataAnnotations.ControlFactoriesAttribute>();
             if (cfa != null && !string.IsNullOrEmpty(cfa.DataGrid_EditorFactoryMethod))
@@ -210,7 +223,7 @@ namespace PropertyTools.Wpf
         /// </returns>
         protected virtual FrameworkElement CreateComboBox(PropertyDefinition propertyDefinition, string bindingPath)
         {
-            var c = new ComboBox { IsEditable = propertyDefinition.IsEditable, Focusable = false, Margin = new Thickness(0, 0, -1, -1) };
+            var c = new ComboBox { IsEditable = propertyDefinition.IsEditable, Focusable = true, Margin = new Thickness(0, 0, -1, -1) };
             c.Cursor = System.Windows.Input.Cursors.Arrow;
             if (propertyDefinition.ItemsSource != null)
             {
@@ -224,6 +237,8 @@ namespace PropertyTools.Wpf
                     c.SetBinding(ItemsControl.ItemsSourceProperty, itemsSourceBinding);
                 }
             }
+
+            c.Loaded += (s, e) => { ((Popup)c.Template.FindName("PART_Popup", c)).PopupAnimation = PopupAnimation.None; };
 
             c.DropDownClosed += (s, e) => FocusParentDataGrid(c);
             var binding = propertyDefinition.CreateBinding(bindingPath);
