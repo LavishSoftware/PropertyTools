@@ -658,22 +658,9 @@ namespace PropertyTools.Wpf
 
             foreach (var cd in property.Columns)
             {
-                var cd = new ColumnDefinition
-                    {
-                        PropertyName = ca.PropertyName,
-                        Header = ca.Header,
-                        FormatString = ca.FormatString,
-                        Width = (GridLength)(glc.ConvertFromInvariantString(ca.Width) ?? GridLength.Auto),
-                        IsReadOnly = ca.IsReadOnly,
-                        
-                    };
-                if (ca.PropertyName == string.Empty && property.ListItemItemsSource != null)
+                if (cd.PropertyName == string.Empty && property.ListItemItemsSource != null)
                 {
                     cd.ItemsSource = property.ListItemItemsSource;
-                }
-                if (ca.ConverterType!=null)
-                {
-                    cd.Converter = Activator.CreateInstance(ca.ConverterType) as IValueConverter;
                 }
 
                 c.ColumnDefinitions.Add(cd);
