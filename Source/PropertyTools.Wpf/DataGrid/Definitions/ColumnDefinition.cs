@@ -29,5 +29,11 @@ namespace PropertyTools.Wpf
         /// </summary>
         /// <value>The width.</value>
         public GridLength Width { get; set; }
+
+        /// <summary>
+        /// Gets or sets the sort index.
+        /// </summary>
+        /// <value>The sort index.</value>
+        public int SortIndex { get; set; }
     }
 }

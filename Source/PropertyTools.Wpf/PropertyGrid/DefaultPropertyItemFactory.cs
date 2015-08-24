@@ -187,7 +187,7 @@ namespace PropertyTools.Wpf
                 }
 
                 // Skip properties marked with [System.ComponentModel.Browsable(false)] or [PropertyTools.DataAnnotations.Browsable(false)]
-                if (!pd.IsBrowsable())
+                if (!pd.IsBrowsableByPropertyGrid())
                 {
                     continue;
                 }
@@ -483,8 +483,7 @@ namespace PropertyTools.Wpf
                                  Width = (GridLength)(glc.ConvertFromInvariantString(ca.Width) ?? GridLength.Auto),
                                  IsReadOnly = ca.IsReadOnly,
                                  HorizontalAlignment = StringUtilities.ToHorizontalAlignment(ca.Alignment.ToString(CultureInfo.InvariantCulture))
-                             };
-
+                             };                
                 // TODO: sort by index
                 pi.Columns.Add(cd);
             }

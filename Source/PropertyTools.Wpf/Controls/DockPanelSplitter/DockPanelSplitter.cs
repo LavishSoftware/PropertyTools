@@ -33,6 +33,12 @@ namespace PropertyTools.Wpf
             "Thickness", typeof(double), typeof(DockPanelSplitter), new UIPropertyMetadata(4.0, ThicknessChanged));
 
         /// <summary>
+        /// Identifies the <see cref="KeepVisible"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty KeepVisibleProperty = DependencyProperty.Register(
+            "KeepVisible", typeof(bool), typeof(DockPanelSplitter), new UIPropertyMetadata(false));
+
+        /// <summary>
         /// The element.
         /// </summary>
         private FrameworkElement element; // element to resize (target element)
@@ -133,6 +139,23 @@ namespace PropertyTools.Wpf
             set
             {
                 this.SetValue(ThicknessProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets whether to keep the splitter visible.
+        /// </summary>
+        /// <value>Whether to keep the splitter visible.</value>
+        public bool KeepVisible
+        {
+            get
+            {
+                return (bool)this.GetValue(KeepVisibleProperty);
+            }
+
+            set
+            {
+                this.SetValue(KeepVisibleProperty, value);
             }
         }
 
@@ -386,11 +409,23 @@ namespace PropertyTools.Wpf
 
             // todo - constrain the height of the element to the available client area
             var dp = this.Parent as Panel;
-            Dock dock = DockPanel.GetDock(this);
-            var t = this.element.TransformToAncestor(dp) as MatrixTransform;
-            if (dock == Dock.Top && newHeight > dp.ActualHeight - t.Matrix.OffsetY - this.Thickness)
+
+            if (KeepVisible)
             {
-                newHeight = dp.ActualHeight - t.Matrix.OffsetY - this.Thickness;
+                double maxHeight = dp.ActualHeight - this.Thickness;
+                if (newHeight > maxHeight)
+                    newHeight = maxHeight;
+                if (newHeight < this.Thickness)
+                    newHeight = this.Thickness;
+            }
+
+            Dock dock = DockPanel.GetDock(this);
+            if (dock == Dock.Top) 
+            {
+                var t = this.element.TransformToAncestor(dp) as MatrixTransform;
+                double maxHeight = dp.ActualHeight - t.Matrix.OffsetY - this.Thickness;
+                if (newHeight > maxHeight)
+                    newHeight = maxHeight;
             }
 
             this.element.Height = newHeight;
@@ -414,11 +449,23 @@ namespace PropertyTools.Wpf
 
             // todo - constrain the width of the element to the available client area
             var dp = this.Parent as Panel;
-            Dock dock = DockPanel.GetDock(this);
-            var t = this.element.TransformToAncestor(dp) as MatrixTransform;
-            if (dock == Dock.Left && newWidth > dp.ActualWidth - t.Matrix.OffsetX - this.Thickness)
+
+            if (KeepVisible)
             {
-                newWidth = dp.ActualWidth - t.Matrix.OffsetX - this.Thickness;
+                double maxWidth = dp.ActualWidth - this.Thickness;
+                if (newWidth > maxWidth)
+                    newWidth = maxWidth;
+                if (newWidth < this.Thickness)
+                    newWidth = this.Thickness;
+            }
+
+            Dock dock = DockPanel.GetDock(this);
+            if (dock == Dock.Left)
+            { 
+                var t = this.element.TransformToAncestor(dp) as MatrixTransform;
+                double maxWidth = dp.ActualWidth - t.Matrix.OffsetX - this.Thickness;
+                if (newWidth > maxWidth)
+                    newWidth = maxWidth;
             }
 
             this.element.Width = newWidth;

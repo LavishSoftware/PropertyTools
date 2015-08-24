@@ -205,34 +205,44 @@ namespace PropertyTools.Wpf
 
                 var view = CollectionViewSource.GetDefaultView(this.ItemsSource);
                 var iitemProperties = view as IItemProperties;
+                System.Collections.ObjectModel.Collection<PropertyDefinition> unsorted = new System.Collections.ObjectModel.Collection<PropertyDefinition>();
+                IOrderedEnumerable<PropertyDefinition> sorted = unsorted.OrderBy(q => ((ColumnDefinition)q).SortIndex);
                 if (iitemProperties != null && iitemProperties.ItemProperties.Count > 0)
                 {
+
                     foreach (var info in iitemProperties.ItemProperties)
                     {
                         var descriptor = info.Descriptor as PropertyDescriptor;
-                        if (!descriptor.IsBrowsable)
+                        if (!descriptor.IsBrowsableByDataGrid())
                         {
                             continue;
                         }
 
-                        
-                            ColumnDefinition cd = new ColumnDefinition
-                            {
-                                Descriptor = descriptor,                               
-                                Header = descriptor.GetDisplayName(),
-                                HorizontalAlignment = Owner.DefaultHorizontalAlignment,
-                                Width = Owner.DefaultColumnWidth
-                            };
-                            DataAnnotations.ConverterAttribute coa = descriptor.GetFirstAttributeOrDefault<DataAnnotations.ConverterAttribute>();
-                            if (coa != null)
-                            {
-                                cd.Converter = Activator.CreateInstance(coa.ConverterType) as IValueConverter;
-                            }
+                        ColumnDefinition cd = new ColumnDefinition
+                        {
+                            Descriptor = descriptor,
+                            Header = descriptor.GetDisplayName(),
+                            HorizontalAlignment = Owner.DefaultHorizontalAlignment,
+                            Width = Owner.DefaultColumnWidth
+                        };
+                        DataAnnotations.ConverterAttribute coa = descriptor.GetFirstAttributeOrDefault<DataAnnotations.ConverterAttribute>();
+                        if (coa != null)
+                        {
+                            cd.Converter = Activator.CreateInstance(coa.ConverterType) as IValueConverter;
+                        }
+                        DataAnnotations.SortIndexAttribute sia = descriptor.GetFirstAttributeOrDefault<DataAnnotations.SortIndexAttribute>();
+                        if (sia != null)
+                        {
+                            cd.SortIndex = sia.SortIndex;
+                        }
 
-                        Owner.ColumnDefinitions.Add(cd);
+                        unsorted.Add(cd);
                     }
 
-
+                    foreach(var cd in sorted)
+                    {
+                        Owner.ColumnDefinitions.Add(cd);
+                    }                    
                     return;
                 }
 
@@ -248,7 +258,7 @@ namespace PropertyTools.Wpf
 
                 foreach (PropertyDescriptor descriptor in properties)
                 {
-                    if (!descriptor.IsBrowsable)
+                    if (!descriptor.IsBrowsableByDataGrid())
                     {
                         continue;
                     }
@@ -258,7 +268,7 @@ namespace PropertyTools.Wpf
                                 Descriptor = descriptor,
                                 Header = descriptor.GetDisplayName(),
                                 HorizontalAlignment = Owner.DefaultHorizontalAlignment,
-                                Width = Owner.DefaultColumnWidth
+                                Width = Owner.DefaultColumnWidth,
                             };
                     DataAnnotations.ConverterAttribute coa = descriptor.GetFirstAttributeOrDefault<DataAnnotations.ConverterAttribute>();
                     if (coa != null)
@@ -266,8 +276,19 @@ namespace PropertyTools.Wpf
                         cd.Converter = Activator.CreateInstance(coa.ConverterType) as IValueConverter;
                     }
 
-                    Owner.ColumnDefinitions.Add(cd);
+                    DataAnnotations.SortIndexAttribute sia = descriptor.GetFirstAttributeOrDefault<DataAnnotations.SortIndexAttribute>();
+                    if (sia != null)
+                    {
+                        cd.SortIndex = sia.SortIndex;
+                    }
+
+                    unsorted.Add(cd);
                 }
+
+                foreach (var cd in sorted)
+                {
+                    Owner.ColumnDefinitions.Add(cd);
+                }                    
 
                 if (Owner.ColumnDefinitions.Count == 0)
                 {

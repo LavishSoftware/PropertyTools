@@ -59,7 +59,7 @@ namespace PropertyTools.Wpf
                     if (browsable2 != null)
                     {
                         // It is declared, is it true or false?
-                        if (browsable2.Browsable)
+                        if (browsable2.BrowsableByPropertyGrid)
                         {
                             // Is true - field is not hidden so add it to the result.
                             res.Add(o);
@@ -118,16 +118,32 @@ namespace PropertyTools.Wpf
         }
 
         /// <summary>
-        /// Determines whether the specified property is browsable.
+        /// Determines whether the specified property is browsable by PropertyGrid.
         /// </summary>
         /// <param name="pd">The property descriptor.</param>
-        /// <returns><c>true</c> if the specified property is browsable; otherwise, <c>false</c>.</returns>
-        public static bool IsBrowsable(this System.ComponentModel.PropertyDescriptor pd)
+        /// <returns><c>true</c> if the specified property is browsable by PropertyGrid; otherwise, <c>false</c>.</returns>
+        public static bool IsBrowsableByPropertyGrid(this System.ComponentModel.PropertyDescriptor pd)
         {
             var a = pd.GetFirstAttributeOrDefault<DataAnnotations.BrowsableAttribute>();
             if (a != null)
             {
-                return a.Browsable;
+                return a.BrowsableByPropertyGrid;
+            }
+
+            return pd.IsBrowsable;
+        }
+
+        /// <summary>
+        /// Determines whether the specified property is browsable by DataGrid.
+        /// </summary>
+        /// <param name="pd">The property descriptor.</param>
+        /// <returns><c>true</c> if the specified property is browsable by DataGrid; otherwise, <c>false</c>.</returns>
+        public static bool IsBrowsableByDataGrid(this System.ComponentModel.PropertyDescriptor pd)
+        {
+            var a = pd.GetFirstAttributeOrDefault<DataAnnotations.BrowsableAttribute>();
+            if (a != null)
+            {
+                return a.BrowsableByDataGrid;
             }
 
             return pd.IsBrowsable;
