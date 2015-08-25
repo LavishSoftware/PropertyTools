@@ -1920,6 +1920,7 @@ namespace PropertyTools.Wpf
                 this.CurrentCell = shift ? new CellRef(0, this.CurrentCell.Column) : new CellRef(0, column);
 
                 this.SelectionCell = new CellRef(this.Rows - 1, column);
+                HideEditor();
             }
 
             this.isSelectingColumns = true;
@@ -2596,6 +2597,7 @@ namespace PropertyTools.Wpf
                 this.CurrentCell = shift ? new CellRef(this.CurrentCell.Row, 0) : new CellRef(row, 0);
 
                 this.SelectionCell = new CellRef(row, this.Columns - 1);
+                HideEditor();
             }
 
             this.isSelectingRows = true;
