@@ -950,6 +950,20 @@ namespace PropertyTools.Wpf
                 return;
             }
 
+            // Clear() sets DataContext to null before unloading an element. 
+            // This means TextBox "LostFocus" event arrives too late to update the source, so we need to apply that manually first.
+            if (this.IsKeyboardFocusWithin)
+            {
+                TextBox tb = Keyboard.FocusedElement as TextBox;
+                if (tb != null)
+                {
+                    BindingExpression b = tb.GetBindingExpression(TextBox.TextProperty);
+                    if (b != null && b.Status == BindingStatus.Active)
+                    {
+                        b.UpdateSource();
+                    }
+                }
+            }
             this.tabControl.Items.Clear();
             this.panelControl.Children.Clear();
 
@@ -1050,6 +1064,20 @@ namespace PropertyTools.Wpf
                 return;
             }
 
+            // Clear() invalidates dependency properties before unloading an element. 
+            // This means TextBox "LostFocus" event arrives too late to update the source, so we need to apply that manually first.
+            if (this.IsKeyboardFocusWithin)
+            {
+                TextBox tb = Keyboard.FocusedElement as TextBox;
+                if (tb != null)
+                {
+                    BindingExpression b = tb.GetBindingExpression(TextBox.TextProperty);
+                    if (b != null && b.Status == BindingStatus.Active)
+                    {
+                        b.UpdateSource();
+                    }
+                }
+            }
             this.tabControl.Items.Clear();
             this.panelControl.Children.Clear();
             this.tabControl.Visibility = Visibility.Hidden;
