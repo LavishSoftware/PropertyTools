@@ -349,7 +349,8 @@ namespace PropertyTools.Wpf
         /// Auto-size the specified column.
         /// </summary>
         /// <param name="column">The column.</param>
-        public void AutoSizeColumn(int column)
+        /// <returns>The calculated width of the column.</returns>
+        public double AutoSizeColumn(int column)
         {
             // Initialize with the width of the header element
             var headerElement = this.GetColumnElement(column);
@@ -365,7 +366,9 @@ namespace PropertyTools.Wpf
                 }
             }
 
-            this.sheetGrid.ColumnDefinitions[column].Width = new GridLength((int)maximumWidth + 2);
+            var newWidth = (int)maximumWidth + 2;
+            this.SetColumnWidth(column, new GridLength(newWidth));
+            return newWidth;
         }
 
         /// <summary>
@@ -667,7 +670,6 @@ namespace PropertyTools.Wpf
                 if (textEditor != null)
                 {
                     textEditor.PreviewKeyDown -= this.TextEditorPreviewKeyDown;
-                    textEditor.LostFocus -= this.TextEditorLostFocus;
                     textEditor.Loaded -= this.TextEditorLoaded;
                 }
 
@@ -838,10 +840,10 @@ namespace PropertyTools.Wpf
             this.autoFiller = new AutoFiller(this.GetCellValue, this.TrySetCellValue);
 
             this.autoFillToolTip = new ToolTip
-                                       {
-                                           Placement = PlacementMode.Bottom,
-                                           PlacementTarget = this.autoFillSelection
-                                       };
+            {
+                Placement = PlacementMode.Bottom,
+                PlacementTarget = this.autoFillSelection
+            };
 
             this.UpdateGridContent();
             this.OnSelectedCellsChanged();
@@ -982,7 +984,6 @@ namespace PropertyTools.Wpf
             {
                 //this.currentEditor.Visibility = Visibility.Hidden;
                 textEditor.PreviewKeyDown += this.TextEditorPreviewKeyDown;
-                textEditor.LostFocus += this.TextEditorLostFocus;
                 textEditor.Loaded += this.TextEditorLoaded;
             }
 
@@ -1826,7 +1827,7 @@ namespace PropertyTools.Wpf
             // The source of the binding for the current cell was updated
             // (e.g. check box (display control) was changed or a combo box (edit control) was changed
             var value = this.GetCellValue(changedCell);
-            
+
             var selectedCells = this.SelectedCells.ToArray();
             if (!selectedCells.Contains(changedCell))
             {
@@ -2768,16 +2769,6 @@ namespace PropertyTools.Wpf
         }
 
         /// <summary>
-        /// Handles lost focus events for the text editor.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The event arguments.</param>
-        private void TextEditorLostFocus(object sender, RoutedEventArgs e)
-        {
-            this.EndTextEdit();
-        }
-
-        /// <summary>
         /// Handles key down events in the TextBox editor.
         /// </summary>
         /// <param name="sender">The sender.</param>
@@ -2966,7 +2957,21 @@ namespace PropertyTools.Wpf
         }
 
         /// <summary>
-        /// The unsubscribe notifications.
+        /// Subscribes to collection changed notifications.
+        /// </summary>
+        private void SubscribeToNotifications()
+        {
+            var collection = this.ItemsSource as INotifyCollectionChanged;
+            if (collection != null)
+            {
+                collection.CollectionChanged += this.OnItemsCollectionChanged;
+            }
+
+            this.subcribedCollection = this.ItemsSource;
+        }
+
+        /// <summary>
+        /// Unsubscribes the collection changed notifications.
         /// </summary>
         private void UnsubscribeNotifications()
         {
@@ -2977,6 +2982,16 @@ namespace PropertyTools.Wpf
             }
 
             this.subcribedCollection = null;
+        }
+
+        /// <summary>
+        /// Sets the width of the specified column.
+        /// </summary>
+        /// <param name="column">The column to change.</param>
+        /// <param name="newWidth">The new width.</param>
+        private void SetColumnWidth(int column, GridLength newWidth)
+        {
+            this.sheetGrid.ColumnDefinitions[column].Width = newWidth;
         }
     }
 }
