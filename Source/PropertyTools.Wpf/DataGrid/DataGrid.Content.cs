@@ -131,32 +131,21 @@ namespace PropertyTools.Wpf
             this.sheetGrid.UpdateLayout();
             this.columnGrid.UpdateLayout();
 
-            double starsToDistribute = 0;
-            double usedWidth = 0;
             for (int i = 0; i < this.Columns; i++)
             {
-                var columnWidth = this.GetColumnWidth(i);
-                if (columnWidth == GridLength.Auto || this.AutoSizeColumns)
+                if (this.AutoSizeColumns)
                 {
-                    usedWidth += this.AutoSizeColumn(i);
+                    this.AutoSizeColumn(i);
                 }
-                else if (columnWidth.IsAbsolute)
+                else
                 {
-                    usedWidth += columnWidth.Value;
-                }
-                else if (columnWidth.IsStar)
-                {
-                    starsToDistribute += columnWidth.Value;
-                }
-            }
-
-            var widthPerStar = Math.Max((this.sheetScrollViewer.ActualWidth - usedWidth) / starsToDistribute, 0);
-            for (int i = 0; i < this.Columns; i++)
-            {
-                var columnWidth = this.GetColumnWidth(i);
-                if (columnWidth.IsStar && !this.AutoSizeColumns)
-                {
-                    this.SetColumnWidth(i, new GridLength(widthPerStar * columnWidth.Value));
+                    GridLength gl = this.GetColumnWidth(i);
+                    if (gl.IsAuto)
+                        this.AutoSizeColumn(i);
+                    else
+                    {
+                        this.sheetGrid.ColumnDefinitions[i].Width = gl;
+                    }
                 }
             }
 
